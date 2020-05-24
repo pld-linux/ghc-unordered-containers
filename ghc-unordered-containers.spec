@@ -6,23 +6,22 @@
 Summary:	Efficient hashing-based container types
 Summary(pl.UTF-8):	Typy wydajnych kontenerów opartych na haszowaniu
 Name:		ghc-%{pkgname}
-Version:	0.2.3.3
+Version:	0.2.10.0
 Release:	1
 License:	BSD
 Group:		Development/Languages
 #Source0Download: http://hackage.haskell.org/package/unordered-containers
 Source0:	http://hackage.haskell.org/package/%{pkgname}-%{version}/%{pkgname}-%{version}.tar.gz
-# Source0-md5:	e1ccd76f0ce7935e83b27a16062f654f
+# Source0-md5:	5994101f6b1f19b264dcfdf863f57324
+Patch0:		hashable-1.3.patch
 URL:		http://hackage.haskell.org/package/unordered-containers
 BuildRequires:	ghc >= 6.12.3
 BuildRequires:	ghc-base >= 4
-BuildRequires:	ghc-base < 5
 BuildRequires:	ghc-deepseq >= 1.1
 BuildRequires:	ghc-hashable >= 1.0.1.1
 %if %{with prof}
 BuildRequires:	ghc-prof >= 6.12.3
 BuildRequires:	ghc-base-prof >= 4
-BuildRequires:	ghc-base-prof < 5
 BuildRequires:	ghc-deepseq-prof >= 1.1
 BuildRequires:	ghc-hashable-prof >= 1.0.1.1
 %endif
@@ -30,7 +29,6 @@ BuildRequires:	rpmbuild(macros) >= 1.608
 Requires(post,postun):	/usr/bin/ghc-pkg
 %requires_eq	ghc
 Requires:	ghc-base >= 4
-Requires:	ghc-base < 5
 Requires:	ghc-deepseq >= 1.1
 Requires:	ghc-hashable >= 1.0.1.1
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -57,7 +55,6 @@ Summary(pl.UTF-8):	Biblioteka profilująca %{pkgname} dla GHC
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	ghc-base-prof >= 4
-Requires:	ghc-base-prof < 5
 Requires:	ghc-deepseq-prof >= 1.1
 Requires:	ghc-hashable-prof >= 1.0.1.1
 
@@ -82,6 +79,7 @@ Dokumentacja w formacie HTML dla pakietu ghc %{pkgname}.
 
 %prep
 %setup -q -n %{pkgname}-%{version}
+%patch -p1
 
 %build
 runhaskell Setup.hs configure -v2 \
@@ -122,20 +120,30 @@ rm -rf $RPM_BUILD_ROOT
 %doc LICENSE
 %{_libdir}/%{ghcdir}/package.conf.d/%{pkgname}.conf
 %dir %{_libdir}/%{ghcdir}/%{pkgname}-%{version}
-%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/HSunordered-containers-%{version}.o
-%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/libHSunordered-containers-%{version}.a
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/libHSunordered-containers-%{version}-*.so
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/libHSunordered-containers-%{version}-*.a
+%exclude %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/libHSunordered-containers-%{version}-*_p.a
 %dir %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data
-%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/HashSet.hi
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/*.hi
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/*.dyn_hi
 %dir %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/HashMap
 %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/HashMap/*.hi
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/HashMap/*.dyn_hi
+%dir %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/HashMap/Strict
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/HashMap/Strict/*.hi
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/HashMap/Strict/*.dyn_hi
+%dir %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/HashSet
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/HashSet/*.hi
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/HashSet/*.dyn_hi
 
 %if %{with prof}
 %files prof
 %defattr(644,root,root,755)
-%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/libHSunordered-containers-%{version}_p.a
-%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/HashSet.p_hi
-%dir %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/HashMap
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/libHSunordered-containers-%{version}-*_p.a
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/*.p_hi
 %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/HashMap/*.p_hi
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/HashMap/Strict/*.p_hi
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/HashSet/*.p_hi
 %endif
 
 %files doc
