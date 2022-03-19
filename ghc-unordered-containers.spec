@@ -7,7 +7,7 @@ Summary:	Efficient hashing-based container types
 Summary(pl.UTF-8):	Typy wydajnych kontenerów opartych na haszowaniu
 Name:		ghc-%{pkgname}
 Version:	0.2.10.0
-Release:	1
+Release:	2
 License:	BSD
 Group:		Development/Languages
 #Source0Download: http://hackage.haskell.org/package/unordered-containers
